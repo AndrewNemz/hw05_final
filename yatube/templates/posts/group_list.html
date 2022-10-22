@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% block title %}{{ group.title }}{% endblock %}
+
+
+{% block content %}
+  {% for post in page_obj %}
+    {% include 'includes/list.html' %}
+  {% endfor %}
+  {% include 'posts/includes/paginator.html' %}
+  {% if post.group %}    
+          <a href="{% url 'posts:group_posts' post.group.slug %}">все записи группы</a> 
+  {% endif %}  
+{% endblock %}
