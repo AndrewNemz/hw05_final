@@ -34,7 +34,7 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['text']
 
-    def clean_text(self):                                 # test_func
+    def clean_text(self):
         data = self.cleaned_data['text']
         if data.isspace():
             raise forms.ValidationError(

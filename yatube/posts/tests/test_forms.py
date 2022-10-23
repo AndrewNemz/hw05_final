@@ -145,9 +145,11 @@ class PostFormTests(TestCase):
         response = self.auth_user_comm.post(
             reverse(
                 'posts:add_comment',
-                kwargs={'post_id': post.id}),
+                kwargs={'post_id': post.id}
+            ),
             data=form_data,
-            follow=True)
+            follow=True
+        )
         comment = Comment.objects.latest('id')
         self.assertEqual(Comment.objects.count(), comments_count + 1)
         self.assertEqual(comment.text, form_data['text'])
