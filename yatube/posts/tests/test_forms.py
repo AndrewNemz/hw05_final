@@ -44,11 +44,6 @@ class PostFormTests(TestCase):
 
     def test_create_post(self):
         """Валидная форма создает запись в Post."""
-        self.group = Group.objects.create(
-            title="Тестовая группа",
-            slug="test-slug",
-            description="Тестовое описание",
-        )
         posts_count = Post.objects.count()
         form_data = {
             'text': 'Тестовый текст',
@@ -59,26 +54,20 @@ class PostFormTests(TestCase):
             data=form_data,
             follow=True
         )
+        post = Post.objects.latest('id')
         self.assertRedirects(
             response, reverse(
                 "posts:profile", kwargs={'username': self.user.username}
             )
         )
         self.assertEqual(Post.objects.count(), posts_count + 1)
-        self.assertTrue(
-            Post.objects.filter(text='Тестовый текст',).exists()
-        )
+        self.assertEqual(post.text, form_data['text'])
 
     def test_post_edit(self):
         """Валидная форма изменяет запись в Post."""
         self.post = Post.objects.create(
             author=self.user,
             text="Тестовый текст",
-        )
-        self.group = Group.objects.create(
-            title="Тестовая группа",
-            slug="test-slug",
-            description="Тестовое описание",
         )
         posts_count = Post.objects.count()
         form_data = {"text": "Изменяем текст", "group": self.group.id}
@@ -87,13 +76,14 @@ class PostFormTests(TestCase):
             data=form_data,
             follow=True,
         )
+        post = Post.objects.latest('id')
         self.assertRedirects(
             response, reverse(
                 "posts:post_detail", kwargs={"post_id": self.post.id}
             )
         )
         self.assertEqual(Post.objects.count(), posts_count)
-        self.assertTrue(Post.objects.filter(text="Изменяем текст").exists())
+        self.assertEqual(post.text, form_data['text'])
 
     def test_authorized_user_create_post(self):
         """Проверка создания записи авторизированным клиентом."""
@@ -156,4 +146,5 @@ class PostFormTests(TestCase):
         self.assertEqual(comment.author, self.comm_author)
         self.assertEqual(comment.post_id, post.id)
         self.assertRedirects(
-            response, reverse('posts:post_detail', args={post.id}))
+            response, reverse('posts:post_detail', args={post.id})
+        )

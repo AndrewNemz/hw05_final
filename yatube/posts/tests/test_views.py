@@ -153,16 +153,20 @@ class PostViewsTests(TestCase):
         """Проверка работы кеша."""
         post = Post.objects.create(
             text='Кеш-пост',
-            author=self.user)
+            author=self.user
+        )
         content_add = self.authorized_client.get(
-            reverse('posts:home_page')).content
+            reverse('posts:home_page')
+        ).content
         post.delete()
         content_delete = self.authorized_client.get(
-            reverse('posts:home_page')).content
+            reverse('posts:home_page')
+        ).content
         self.assertEqual(content_add, content_delete)
         cache.clear()
         content_cache_clear = self.authorized_client.get(
-            reverse('posts:home_page')).content
+            reverse('posts:home_page')
+        ).content
         self.assertNotEqual(content_add, content_cache_clear)
 
 
@@ -211,7 +215,8 @@ class PostFollowViewsTest(TestCase):
         self.follower_client.post(
             reverse(
                 'posts:profile_unfollow',
-                kwargs={'username': self.post_follower})
+                kwargs={'username': self.post_follower}
+            )
         )
         self.assertEqual(Follow.objects.count(), count_follow - 1)
 

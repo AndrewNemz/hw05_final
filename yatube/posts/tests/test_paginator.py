@@ -21,12 +21,11 @@ class PostPaginatorTests(TestCase):
             description="Тестовое описание",
         )
         for post in range(TEST_OF_POST):
-            cls.post = Post.objects.create(
+            Post.objects.create(
                 author=cls.user,
-                text="Тестовая пост",
+                text=f"Тестовая пост #{post}",
                 group=cls.group,
             )
-            post += 1
 
     def setUp(self):
         self.guest_client = Client()
@@ -52,7 +51,7 @@ class PostPaginatorTests(TestCase):
     def test_profile_show_correct_context(self):
         """Постов на странице profile  равно ожидаемому кол-ву(10)."""
         response = self.guest_client.get(
-            reverse("posts:profile", args=(self.post.author,))
+            reverse("posts:profile", args=(self.user.username,))
         )
         expected = list(
             Post.objects.filter(author_id=self.user.id)[:FIRST_PAGE_POSTS]

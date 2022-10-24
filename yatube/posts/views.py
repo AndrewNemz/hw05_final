@@ -64,7 +64,7 @@ def post_create(request):
     if request.method == 'POST':
         form = PostForm(request.POST or None, files=request.FILES or None)
         if form.is_valid():
-            form.save(commit=False).author_id = request.user.pk
+            form.save(commit=False).author = request.user
             form.save()
             return redirect('posts:profile', username=request.user)
     else:
@@ -124,7 +124,7 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     profile_user = get_object_or_404(User, username=username)
-    if (request.user != profile_user):
+    if request.user != profile_user:
         Follow.objects.get_or_create(
             user=request.user, author=profile_user
         )
